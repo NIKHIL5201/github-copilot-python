@@ -1,22 +1,86 @@
+/* Theme tokens keep every surface and control readable in both modes. */
+:root {
+    color-scheme: light;
+    --page-bg: #f4f4f4;
+    --surface-bg: #ffffff;
+    --cell-bg: #fafafa;
+    --box-light: #ffffff;
+    --box-dark: #e7ebef;
+    --text: #263238;
+    --muted-text: #455a64;
+    --border: #455a64;
+    --cell-border: #b0bec5;
+    --focus-bg: #dff6ff;
+    --prefilled-text: #1f2933;
+    --hinted-bg: #dcedc8;
+    --hinted-text: #33691e;
+    --incorrect-bg: #ffcdd2;
+    --conflict-bg: #ffb3b3;
+    --error: #b71c1c;
+    --success: #2e7d32;
+    --button-bg: #1565c0;
+    --button-hover: #0d47a1;
+    --button-disabled: #90a4ae;
+    --button-text: #ffffff;
+    --header-bg: #1565c0;
+    --table-line: #cfd8dc;
+    --shadow: rgba(38, 50, 56, 0.18);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --page-bg: #172027;
+    --surface-bg: #26343d;
+    --cell-bg: #2e3d47;
+    --box-light: #2e3d47;
+    --box-dark: #3b4b55;
+    --text: #f1f5f7;
+    --muted-text: #c4d0d6;
+    --border: #b0bec5;
+    --cell-border: #78909c;
+    --focus-bg: #285566;
+    --prefilled-text: #ffffff;
+    --hinted-bg: #456238;
+    --hinted-text: #efffdc;
+    --incorrect-bg: #7f3038;
+    --conflict-bg: #8c3d3d;
+    --error: #ffb4ab;
+    --success: #a5d6a7;
+    --button-bg: #42a5f5;
+    --button-hover: #64b5f6;
+    --button-disabled: #607d8b;
+    --button-text: #102027;
+    --header-bg: #1976d2;
+    --table-line: #546e7a;
+    --shadow: rgba(0, 0, 0, 0.38);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: var(--page-bg);
+    color: var(--text);
     text-align: center;
     margin: 0;
-    padding: 0;
+    padding: 0 16px 40px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1 {
     margin-top: 30px;
-    color: #333;
+    color: var(--text);
 }
 
 #sudoku-board {
     display: inline-block;
     margin: 30px auto;
-    border: 4px solid #333;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 100%;
+    border: 4px solid var(--border);
+    background: var(--surface-bg);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .sudoku-row {
@@ -24,62 +88,190 @@ h1 {
 }
 
 .sudoku-cell {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #bbb;
+    width: clamp(29px, 8vw, 44px);
+    height: clamp(29px, 8vw, 44px);
+    border: 1px solid var(--cell-border);
     text-align: center;
-    font-size: 20px;
+    font-size: clamp(16px, 4vw, 20px);
     outline: none;
-    background: #fafafa;
-    transition: background 0.2s;
+    background: var(--cell-bg);
+    color: var(--text);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sudoku-cell[data-box="0"],
+.sudoku-cell[data-box="2"],
+.sudoku-cell[data-box="4"],
+.sudoku-cell[data-box="6"],
+.sudoku-cell[data-box="8"] {
+    background: var(--box-light);
+}
+
+.sudoku-cell[data-box="1"],
+.sudoku-cell[data-box="3"],
+.sudoku-cell[data-box="5"],
+.sudoku-cell[data-box="7"] {
+    background: var(--box-dark);
 }
 
 .sudoku-cell:focus {
-    background: #e0f7fa;
+    background: var(--focus-bg);
 }
 
 .sudoku-cell.prefilled {
-    background: #e0e0e0;
     font-weight: bold;
-    color: #333;
+    color: var(--prefilled-text);
 }
 
 .sudoku-cell.incorrect {
-    background: #ffcdd2;
+    background: var(--incorrect-bg);
+}
+
+.sudoku-cell.conflict {
+    background: var(--conflict-bg);
+    box-shadow: inset 0 0 0 2px var(--error);
+}
+
+.sudoku-cell.hinted {
+    background: var(--hinted-bg);
+    color: var(--hinted-text);
+    font-weight: bold;
 }
 
 .sudoku-cell:nth-child(3),
 .sudoku-cell:nth-child(6) {
-    border-right: 3px solid #333;
+    border-right: 3px solid var(--border);
 }
 
 .sudoku-row:nth-child(3) .sudoku-cell,
 .sudoku-row:nth-child(6) .sudoku-cell {
-    border-bottom: 3px solid #333;
+    border-bottom: 3px solid var(--border);
 }
 
 .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 900px;
     margin: 20px auto;
 }
 
+label,
+select {
+    font-size: 16px;
+}
+
+select {
+    padding: 7px 10px;
+    color: var(--text);
+    background: var(--surface-bg);
+    border: 1px solid var(--cell-border);
+    border-radius: 4px;
+}
+
 button {
-    padding: 8px 18px;
-    margin: 0 8px;
+    padding: 9px 16px;
     font-size: 16px;
     border: none;
-    background: #1976d2;
-    color: #fff;
+    background: var(--button-bg);
+    color: var(--button-text);
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
-    background: #1565c0;
+    background: var(--button-hover);
+}
+
+button:disabled {
+    background: var(--button-disabled);
+    cursor: not-allowed;
+}
+
+.timer-label {
+    font-size: 16px;
+    color: var(--muted-text);
 }
 
 #message {
-    margin-left: 20px;
+    flex-basis: 100%;
+    min-height: 24px;
     font-size: 16px;
-    color: #d32f2f;
+    color: var(--error);
+}
+
+.leaderboard {
+    width: min(620px, calc(100% - 32px));
+    margin: 28px auto 40px;
+}
+
+.leaderboard h2 {
+    color: var(--text);
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface-bg);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.leaderboard th,
+.leaderboard td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--table-line);
+    text-align: left;
+}
+
+.leaderboard th {
+    background: var(--header-bg);
+    color: var(--button-text);
+}
+
+.leaderboard tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 520px) {
+    body {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    h1 {
+        margin-top: 20px;
+        font-size: 28px;
+    }
+
+    #sudoku-board {
+        margin: 20px auto;
+    }
+
+    .controls {
+        gap: 8px;
+    }
+
+    .controls button,
+    .controls select {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 130px;
+    }
+
+    .timer-label {
+        flex-basis: 100%;
+    }
+
+    .leaderboard {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .leaderboard th,
+    .leaderboard td {
+        padding: 8px 6px;
+        font-size: 14px;
+    }
 }
