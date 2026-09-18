@@ -7,6 +7,7 @@ let elapsedSeconds = 0;
 let gameCompleted = false;
 let currentDifficulty = 'Medium';
 let hintsUsed = 0;
+let latestCheckRequest = 0;
 
 // Create the empty 9-by-9 input grid and attach cell listeners.
 function createBoardElement() {
@@ -242,6 +243,7 @@ async function newGame() {
 
 // Check the current board and stop the timer after a correct completion.
 async function checkSolution() {
+  const requestId = ++latestCheckRequest;
   const inputs = document.querySelectorAll('.sudoku-cell');
   const res = await fetch('/check', {
     method: 'POST',
@@ -249,6 +251,7 @@ async function checkSolution() {
     body: JSON.stringify({board: readBoard()})
   });
   const data = await res.json();
+  if (requestId !== latestCheckRequest) return;
   if (data.error) {
     showMessage(data.error);
     return;
@@ -256,9 +259,8 @@ async function checkSolution() {
   const incorrect = new Set(data.incorrect.map(x => x[0]*SIZE + x[1]));
   for (let idx = 0; idx < inputs.length; idx++) {
     const inp = inputs[idx];
-    if (inp.disabled) continue;
     inp.classList.remove('incorrect');
-    if (incorrect.has(idx)) {
+    if (!inp.disabled && incorrect.has(idx)) {
       inp.classList.add('incorrect');
     }
   }

@@ -28,16 +28,24 @@ def new_game():
 
 @app.route('/check', methods=['POST'])
 def check_solution():
-    """Return the entered cells that do not match the current solution."""
-    data = request.json
+    """Return wrong or still-empty playable cells for the current puzzle."""
+    data = request.json or {}
     board = data.get('board')
+    puzzle = CURRENT.get('puzzle')
     solution = CURRENT.get('solution')
-    if solution is None:
+    if solution is None or puzzle is None:
         return jsonify({'error': 'No game in progress'}), 400
+    if not isinstance(board, list) or len(board) != sudoku_logic.SIZE:
+        return jsonify({'error': 'Invalid board'}), 400
+    if any(not isinstance(row, list) or len(row) != sudoku_logic.SIZE for row in board):
+        return jsonify({'error': 'Invalid board'}), 400
+
     incorrect = []
     for i in range(sudoku_logic.SIZE):
         for j in range(sudoku_logic.SIZE):
-            if board[i][j] != 0 and board[i][j] != solution[i][j]:
+            value = board[i][j]
+            is_empty_playable_cell = puzzle[i][j] == sudoku_logic.EMPTY and value == sudoku_logic.EMPTY
+            if is_empty_playable_cell or value != solution[i][j]:
                 incorrect.append([i, j])
     complete = not incorrect and all(
         board[i][j] == solution[i][j]

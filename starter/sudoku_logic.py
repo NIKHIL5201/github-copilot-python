@@ -145,7 +145,12 @@ def count_solutions(board, limit=2):
         return total
 
     return search()
-
+# NOTE: Copilot's first version of this uniqueness-check checked every 
+# possible solution before stopping, which caused puzzle generation to 
+# hang for 2+ minutes. That suggestion was rejected and Copilot was 
+# asked to optimize it to stop early after finding a second solution 
+# (early-exit backtracking), which brought generation time down to 
+# under 0.1 seconds.
 
 def has_unique_solution(board):
     """Return True only when the puzzle has exactly one valid solution."""
